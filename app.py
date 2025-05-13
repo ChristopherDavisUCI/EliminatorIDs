@@ -34,17 +34,20 @@ choice = st.selectbox("Select what contest you want to produce ranks for",
                       contests, index=bbm_index)
 
 if bbm_ranks_file:
-    df_upload = pd.read_csv(bbm_ranks_file)
-    assert "id" in df_upload.columns, "'id' must be one of the columns"
-    # Sort by the uploaded values
-    df_sorted = df_merged.set_index(f"id", drop=True).loc[df_upload["id"]]
-    output_csv = df_sorted[[f"id-{choice}", "firstName", "lastName", "slotName"]].rename(
-        {f"id-{choice}": "id"}, axis=1
-    ).to_csv().encode("utf-8")
-    st.download_button(
-        label="Download ranks",
-        data=output_csv,
-        file_name=f"ranks-{choice}.csv",
-        mime="text/csv",
-        icon=":material/download:",
-    )
+    if choice == "BBM":
+        st.write("Select one of the other contests to produce ranks.")
+    else:
+        df_upload = pd.read_csv(bbm_ranks_file)
+        assert "id" in df_upload.columns, "'id' must be one of the columns"
+        # Sort by the uploaded values
+        df_sorted = df_merged.set_index(f"id", drop=True).loc[df_upload["id"]]
+        output_csv = df_sorted[[f"id-{choice}", "firstName", "lastName", "slotName"]].rename(
+            {f"id-{choice}": "id"}, axis=1
+        ).to_csv().encode("utf-8")
+        st.download_button(
+            label="Download ranks",
+            data=output_csv,
+            file_name=f"ranks-{choice}.csv",
+            mime="text/csv",
+            icon=":material/download:",
+        )
