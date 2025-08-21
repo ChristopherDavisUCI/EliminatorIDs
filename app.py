@@ -40,10 +40,11 @@ if bbm_ranks_file:
         df_upload = pd.read_csv(bbm_ranks_file)
         assert "id" in df_upload.columns, "'id' must be one of the columns"
         # Sort by the uploaded values
-        df_sorted = df_merged.set_index(f"id", drop=True).loc[df_upload["id"]]
+        df_new_index = df_merged.set_index(f"id", drop=True)
+        df_sorted = df_new_index.reindex(df_upload["id"])
         output_csv = df_sorted[[f"id-{choice}", "firstName", "lastName", "slotName"]].rename(
             {f"id-{choice}": "id"}, axis=1
-        ).to_csv().encode("utf-8")
+        ).to_csv(index=False).encode("utf-8")
         st.download_button(
             label="Download ranks",
             data=output_csv,
